@@ -117,7 +117,7 @@ def main():
         model_inception, hist_inception = train_model(model_inception, dataloaders_dict, device, criterion ,scheduler, optimizer_ft, num_epochs, is_inception=(model_name=="inception"))
 
         # Saving model and optimizer
-        torch.save(model_inception.state_dict(),'./models/modelInception.pth')
+        torch.save(model_inception.state_dict(),'./models/modelInception2.pth')
         # [END] defining model
 
     else:
