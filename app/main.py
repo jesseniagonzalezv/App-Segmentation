@@ -5,6 +5,8 @@ from starlette.middleware.cors import CORSMiddleware
 import uvicorn, aiohttp, asyncio
 from io import BytesIO
 from pathlib import Path
+import os
+from unrar import rarfile
 
 model_file_url = 'https://drive.google.com/uc?export=download&id=1Ua2jQhzjtHeIkhpDvzgnG2S-EAEuh26J' # inception model
 # model_file_url = 'https://drive.google.com/uc?export=download&id=1DfQMqvHKENNQBjxBmmpjJi_YGVLCTYyP' # densenet201 model
@@ -52,6 +54,20 @@ tasks = [asyncio.ensure_future(setup_device())]
 learn = loop.run_until_complete(asyncio.gather(*tasks))[0]
 loop.close()
 
+async def download_images(url_dir):
+    data_path = path/'dataset_test.rar'
+    await download_file(url_dir, data_path) # download data from Dropbox
+    rar = rarfile.RarFile(data_path)
+    rar.extractall()
+
+    # r=root, d=directory, f=files
+    for r, d, f in os.walk(path/'reto_deep_learning'):
+        for directory in d:
+            if directory == 'test_img':
+                data_dir = os.path.join(r, directory)
+    
+    return data_dir
+
 @app.route('/')
 def index(request):
     html = path/'view'/'index.html'
@@ -62,12 +78,13 @@ async def analyze(request):
     data = await request.form()
     data = await (data['file'].read())
     root = json.load(data)
-    itemurl = root['imageUrl']
-    
+    itemUrl = root['imageUrl']
+
+    data_dir = download_images(itemUrl)
     dataloaders_dict = dataLoaders(input_size, data_dir)
     predictions = test_model(model_inception, dataloaders_dict)
     
-    return JSONResponse({'result': str(learn.predict(img)[0])})
+    return JSONResponse({'result': str(f'{len(predictions)} images were processed')})
 
 if __name__ == '__main__':
     if 'serve' in sys.argv: uvicorn.run(app, host='0.0.0.0', port=8080)
