@@ -109,6 +109,7 @@ def main():
 
         data_transforms = dataTranforms(input_size)
         image_dataset = {x: datasets.ImageFolder(os.path.join(data_dir, x), data_transforms[x]) for x in ['train']}
+        # print(image_dataset['train'].class_to_idx)
         train_dataset, val_dataset = torch.utils.data.random_split(image_dataset['train'], [int(len(image_dataset['train'])*0.8), (len(image_dataset['train'])-int(len(image_dataset['train'])*0.8))])
         dataloaders_dict = {'train': torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4),
                             'val': torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=True, num_workers=4)}
