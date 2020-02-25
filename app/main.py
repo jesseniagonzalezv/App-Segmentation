@@ -1,3 +1,10 @@
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import numpy as np
+import torchvision
+import argparse
+from torchvision import datasets, models, transforms
 from starlette.applications import Starlette
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
@@ -6,7 +13,8 @@ import uvicorn, aiohttp, asyncio
 from io import BytesIO
 from pathlib import Path
 import os
-from unrar import rarfile
+#from unrar import rarfile
+from pyunpack import Archive
 
 model_file_url = 'https://drive.google.com/uc?export=download&id=1Ua2jQhzjtHeIkhpDvzgnG2S-EAEuh26J' # inception model
 # model_file_url = 'https://drive.google.com/uc?export=download&id=1DfQMqvHKENNQBjxBmmpjJi_YGVLCTYyP' # densenet201 model
@@ -40,6 +48,8 @@ async def setup_device():
     if torch.cuda.is_available():
         # load model on gpu and set it on test mode
         model = torch.load(model_path)
+        print(model)
+
         model.eval()
         model.cuda(device)
     else:
@@ -57,8 +67,9 @@ loop.close()
 async def download_images(url_dir):
     data_path = path/'dataset_test.rar'
     await download_file(url_dir, data_path) # download data from Dropbox
-    rar = rarfile.RarFile(data_path)
-    rar.extractall()
+    Archive(data_path).extractall(".")
+    #rar = rarfile.RarFile(data_path)
+    #rar.extractall()
 
     # r=root, d=directory, f=files
     for r, d, f in os.walk(path/'reto_deep_learning'):
