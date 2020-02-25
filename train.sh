@@ -10,4 +10,4 @@ export CUDA_VISIBLE_DEVICES=0
 #python3 trainMain.py --datadir ./dataset --batchSize 8 --nepochs 50 --classes 25 --model densenet201
 
 rm -rf __pycache__
-python3 trainMain.py --datadir ./dataset --batchSize 8 --nepochs 50 --classes 25 --model inception
+python3 trainMain.py --datadir ./dataset --batchSize 8 --nepochs 25 --classes 25 --model inception

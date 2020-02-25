@@ -77,7 +77,8 @@ def main():
         model_resnet, hist = train_model(model_resnet50, dataloaders_dict, device, criterion,scheduler, optimizer_ft, num_epochs, is_inception=(model_name=="inception"))
 
         # Saving model and optimizer
-        torch.save(model_resnet50.state_dict(),'./models/modelResnet50.pth') 
+        # torch.save(model_resnet50.state_dict(),'./models/modelResnet50.pth') 
+        torch.save(model_resnet50,'./models/modelResnet50.pth') 
         # [END] defining model
 
     elif model_name == 'densenet201':
@@ -97,7 +98,8 @@ def main():
         model_densenet, hist = train_model(model_densenet, dataloaders_dict, device, criterion,scheduler, optimizer_ft, num_epochs, is_inception=(model_name=="inception"))
 
         # Saving model and optimizer
-        torch.save(model_densenet.state_dict(),'./models/modelDensenet201.pth')
+        # torch.save(model_densenet.state_dict(),'./models/modelDensenet201.pth')
+        torch.save(model_densenet,'./models/modelDensenet201.pth')
         # [END] defining model
 
     elif model_name == 'inception':
@@ -117,7 +119,8 @@ def main():
         model_inception, hist_inception = train_model(model_inception, dataloaders_dict, device, criterion ,scheduler, optimizer_ft, num_epochs, is_inception=(model_name=="inception"))
 
         # Saving model and optimizer
-        torch.save(model_inception.state_dict(),'./models/modelInception.pth')
+        # torch.save(model_inception.state_dict(),'./models/modelInception.pth')
+        torch.save(model_inception,'./models/modelInception.pth')
         # [END] defining model
 
     else:
