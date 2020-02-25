@@ -30,7 +30,7 @@ function analyze() {
     }
 
     var fileData = new FormData();
-    fileData.append('file', uploadFiles[0]);
+    fileData.append('upload_file', uploadFiles[0]);
     xhr.send(fileData);
 }
 
