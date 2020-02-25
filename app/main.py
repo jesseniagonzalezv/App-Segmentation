@@ -6,7 +6,7 @@ import torchvision
 import argparse
 from torchvision import datasets, models, transforms
 from starlette.applications import Starlette
-from starlette.responses import HTMLResponse, JSONResponse
+from starlette.responses import HTMLResponse, JSONResponse, FileResponse
 from starlette.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 import uvicorn, aiohttp, asyncio
@@ -16,6 +16,7 @@ import os
 import sys
 import json
 import ast
+import csv
 from testFunctions import dataLoaders, test_model
 
 #from unrar import rarfile
@@ -124,10 +125,18 @@ async def analyze(request):
                 data_dir = os.path.join(r, directory)
     '''
     #print(learn)
-    dataloaders_dict = dataLoaders(input_size, data_dir)
-    predictions = test_model(learn[0], dataloaders_dict, learn[1])
+    dataloaders_dict, class_to_idx, imgs_filename = dataLoaders(input_size, data_dir)
+    predictions = test_model(learn[0], dataloaders_dict, learn[1], class_to_idx)
+    #print(imgs_filename['test'].imgs)
 
-    return JSONResponse({'result': str(f'X images were processed')})
+    with open('output.csv', mode='w') as output_preds:
+        output_preds = csv.writer(output_preds, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        output_preds.writerow(['image_id', 'label'])
+        for i in range(1,len(predictions)):
+            output_preds.writerow([os.path.split(str(imgs_filename['test'].imgs[i][0]))[1], predictions[i]])
+
+    #return JSONResponse({'result': str(f'{len(predictions)} images were processed')})
+    return FileResponse('output.csv')
 
 if __name__ == '__main__':
     if 'serve' in sys.argv: uvicorn.run(app, host='0.0.0.0', port=8080)
