@@ -12,7 +12,7 @@ pip install -r requirements
 python3 app/main.py serve
 ```
 - Connect to your local host: [http://0.0.0.0:8080](http://0.0.0.0:8080), an interface will appear. 
-- Upload a json file with the url containing the test images. Puedes modificar el archivo **examplePayload.json**
+- Upload a json file with the url containing the test images. You can modify the file **examplePayload.json**
 - Click on analyze and wait for the download window.
 - The CSV downloaded will contain the images names and labels.
 
