@@ -27,6 +27,12 @@ def dataLoaders(input_size, data_dir):
     image_dataset = {x: datasets.ImageFolder(os.path.join(data_dir, x), data_transforms[x]) for x in ['test']}
     dataloaders_dict = {'test': torch.utils.data.DataLoader(image_dataset['test'], batch_size=1, shuffle=True, num_workers=4)}
 
+    class_to_idx = {'': 0
+
+
+
+    }
+
     return dataloaders_dict
 
 def test_model(model, dataloaders, device):
