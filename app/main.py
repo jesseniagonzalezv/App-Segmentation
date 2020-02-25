@@ -15,7 +15,6 @@ from pathlib import Path
 import os
 import sys
 import json
-import ast
 import csv
 from testFunctions import dataLoaders, test_model
 

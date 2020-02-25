@@ -1,0 +1,11 @@
+#Flask==1.0.2
+torch
+torchvision
+imutils
+google-python-cloud-debugger
+gevent
+uvicorn
+starlette
+python-multipart
+aiofiles
+aiohttp
