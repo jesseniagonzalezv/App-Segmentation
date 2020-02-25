@@ -16,7 +16,7 @@ python3 app/main.py serve
 - Click on analyze and wait for the download window.
 - The CSV downloaded will contain the images names and labels.
 
-> NOTA: You can also use POSTMAN for the payload. Just make sure to put the KEY: upload_file when you input the json file, and the METHOD: POST. 
+> NOTE: You can also use POSTMAN for the payload. Just make sure to put the KEY: upload_file when you input the json file, and the METHOD: POST. 
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
