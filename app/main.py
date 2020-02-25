@@ -6,7 +6,7 @@ import torchvision
 import argparse
 from torchvision import datasets, models, transforms
 from starlette.applications import Starlette
-from starlette.responses import HTMLResponse, JSONResponse, FileResponse
+from starlette.responses import HTMLResponse, JSONResponse, FileResponse, StreamingResponse
 from starlette.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 import uvicorn, aiohttp, asyncio
@@ -132,11 +132,12 @@ async def analyze(request):
     with open('output.csv', mode='w') as output_preds:
         output_preds = csv.writer(output_preds, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         output_preds.writerow(['image_id', 'label'])
-        for i in range(1,len(predictions)):
-            output_preds.writerow([os.path.split(str(imgs_filename['test'].imgs[i][0]))[1], predictions[i]])
+        for i in range(1,len(predictions)+1):
+            output_preds.writerow([os.path.split(str(imgs_filename['test'].imgs[i-1][0]))[1], predictions[i-1]])
 
     #return JSONResponse({'result': str(f'{len(predictions)} images were processed')})
-    return FileResponse('output.csv')
+    return FileResponse(path='output.csv', filename='output.csv')
+    #return StreamingResponse(open('output.csv', mode='w'), media_type='text/plain')
 
 if __name__ == '__main__':
     if 'serve' in sys.argv: uvicorn.run(app, host='0.0.0.0', port=8080)
