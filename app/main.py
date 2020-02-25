@@ -15,6 +15,8 @@ from pathlib import Path
 import os
 import sys
 import json
+import ast
+from testFunctions import dataLoaders, test_model
 
 #from unrar import rarfile
 from pyunpack import Archive
@@ -68,7 +70,8 @@ loop.close()
 async def download_images(url_dir):
     data_path = path/'dataset_test.rar'
     await download_file(url_dir, data_path) # download data from Dropbox
-    Archive(data_path).extractall(".")
+    os.makedirs(path/'reto_deep_learning', exist_ok=True)
+    Archive(data_path).extractall("./app/reto_deep_learning")
     #rar = rarfile.RarFile(data_path)
     #rar.extractall()
 
@@ -76,9 +79,16 @@ async def download_images(url_dir):
     for r, d, f in os.walk(path/'reto_deep_learning'):
         for directory in d:
             if directory == 'test_img':
-                data_dir = os.path.join(r, directory)
-    
-    return data_dir
+                local_data_dir = os.path.join(r)
+            else: 
+                print('No existe folder de test. Renombrar folder a test_img')
+
+    os.makedirs(os.path.join(local_data_dir,'test_img/','class0'), exist_ok=True)
+    for r, d, files in os.walk(path/'reto_deep_learning/test_img'):
+        for f in files:
+            os.replace(f'{local_data_dir}/test_img/{f}',f'{local_data_dir}/test_img/class0/{f}')
+
+    return local_data_dir
 
 @app.route('/')
 def index(request):
@@ -87,16 +97,27 @@ def index(request):
 
 @app.route('/analyze', methods=['POST'])
 async def analyze(request):
-    print('oli')
-    data = await request.files('file')
-    data.save(os.path.join('app/', 'inputjson.xml'))
-    #data = await (data['file'].read())
-    #root = json.load(data)
-    itemUrl = root['imageUrl']
+    data = await request.form()
+    contents = await data["upload_file"].read()
+    root = json.loads(contents.decode('utf-8'))
+    itemUrl = root["imagenUrl"]
 
-    data_dir = download_images(itemUrl)
+    data_dir = await download_images(itemUrl)
+    '''
+    data_path = path/'dataset_test.rar'
+    await download_file(itemUrl, data_path) # download data from Dropbox
+    Archive(data_path).extractall(".")
+    #rar = rarfile.RarFile(data_path)
+    #rar.extractall()
+
+    # r=root, d=directory, f=files
+    for r, d, f in os.walk(path/'reto_deep_learning'):
+        for directory in d:
+            if directory == 'train_img':
+                data_dir = os.path.join(r, directory)
+    '''
     dataloaders_dict = dataLoaders(input_size, data_dir)
-    predictions = test_model(model_inception, dataloaders_dict)
+    predictions = test_model(learn.model, dataloaders_dict, learn.device)
     
     return JSONResponse({'result': str(f'{len(predictions)} images were processed')})
 
