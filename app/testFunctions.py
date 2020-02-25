@@ -12,7 +12,7 @@ def dataTranforms(input_size):
     # Data augmentation and normalization for training
     # Todo (improvements) --> this should be in a dataloader class to avoid using augmented data in validation 
     data_transforms = {
-        'test_img': transforms.Compose([
+        'test': transforms.Compose([
             transforms.Resize(input_size),
             transforms.CenterCrop(input_size),
             transforms.ToTensor(),
@@ -24,7 +24,7 @@ def dataTranforms(input_size):
 def dataLoaders(input_size, data_dir):
     # Same process as training
     data_transforms = dataTranforms(input_size)
-    image_dataset = {x: datasets.ImageFolder(os.path.join(data_dir, x), data_transforms[x]) for x in ['test_img']}
+    image_dataset = {x: datasets.ImageFolder(os.path.join(data_dir, x), data_transforms[x]) for x in ['test']}
     dataloaders_dict = {'test': torch.utils.data.DataLoader(image_dataset['test'], batch_size=1, shuffle=True, num_workers=4)}
 
     return dataloaders_dict
@@ -36,12 +36,14 @@ def test_model(model, dataloaders, device):
     running_corrects = 0
 
     # Iterate over data.
-    for inputs in dataloaders['test']:
+    for inputs, _ in dataloaders['test']:
         inputs = inputs.to(device)
 
         with torch.no_grad():
             outputs = model(inputs)
-            _, preds = torch.max(outputs, 1)
+            preds = torch.max(outputs, 1)[1].cpu().data
+            preds = preds.numpy().squeeze()
+            print(preds)
             
     time_elapsed = time.time() - since
     print('Testing complete in {:.0f}m {:.0f}s'.format(time_elapsed // 60, time_elapsed % 60))

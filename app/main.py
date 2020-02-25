@@ -70,24 +70,31 @@ loop.close()
 async def download_images(url_dir):
     data_path = path/'dataset_test.rar'
     await download_file(url_dir, data_path) # download data from Dropbox
-    os.makedirs(path/'reto_deep_learning', exist_ok=True)
-    Archive(data_path).extractall("./app/reto_deep_learning")
+    os.makedirs(path/'reto_deep_learning'/'test', exist_ok=True)
+    Archive(data_path).extractall("./app/reto_deep_learning/test")
     #rar = rarfile.RarFile(data_path)
     #rar.extractall()
+    local_data_dir = './app/reto_deep_learning'
 
+    '''
     # r=root, d=directory, f=files
+    print(path/'reto_deep_learning')
     for r, d, f in os.walk(path/'reto_deep_learning'):
         for directory in d:
-            if directory == 'test_img':
+            print(len(d))
+            print('\n')
+            #print(r)
+            if directory == 'test':
                 local_data_dir = os.path.join(r)
             else: 
-                print('No existe folder de test. Renombrar folder a test_img')
+                print('No existe folder de test. Renombrar folder a test')
 
     os.makedirs(os.path.join(local_data_dir,'test_img/','class0'), exist_ok=True)
     for r, d, files in os.walk(path/'reto_deep_learning/test_img'):
         for f in files:
             os.replace(f'{local_data_dir}/test_img/{f}',f'{local_data_dir}/test_img/class0/{f}')
-
+            print(f'Moving ... {local_data_dir}/test_img/{f}')
+    '''
     return local_data_dir
 
 @app.route('/')
@@ -116,10 +123,11 @@ async def analyze(request):
             if directory == 'train_img':
                 data_dir = os.path.join(r, directory)
     '''
+    #print(learn)
     dataloaders_dict = dataLoaders(input_size, data_dir)
-    predictions = test_model(learn.model, dataloaders_dict, learn.device)
-    
-    return JSONResponse({'result': str(f'{len(predictions)} images were processed')})
+    predictions = test_model(learn[0], dataloaders_dict, learn[1])
+
+    return JSONResponse({'result': str(f'X images were processed')})
 
 if __name__ == '__main__':
     if 'serve' in sys.argv: uvicorn.run(app, host='0.0.0.0', port=8080)
