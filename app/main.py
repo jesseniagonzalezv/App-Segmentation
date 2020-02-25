@@ -64,7 +64,6 @@ async def analyze(request):
     root = json.load(data)
     itemurl = root['imageUrl']
     
-
     dataloaders_dict = dataLoaders(input_size, data_dir)
     predictions = test_model(model_inception, dataloaders_dict)
     
@@ -72,4 +71,3 @@ async def analyze(request):
 
 if __name__ == '__main__':
     if 'serve' in sys.argv: uvicorn.run(app, host='0.0.0.0', port=8080)
-
