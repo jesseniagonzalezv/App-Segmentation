@@ -13,10 +13,13 @@ import uvicorn, aiohttp, asyncio
 from io import BytesIO
 from pathlib import Path
 import os
+import sys
+import json
+
 #from unrar import rarfile
 from pyunpack import Archive
 
-model_file_url = 'https://drive.google.com/uc?export=download&id=1Ua2jQhzjtHeIkhpDvzgnG2S-EAEuh26J' # inception model
+model_file_url = 'https://drive.google.com/uc?export=download&id=1nLbLcm1uv-nGA_KNGzA47cqpt_lyLTV_' # inception model
 # model_file_url = 'https://drive.google.com/uc?export=download&id=1DfQMqvHKENNQBjxBmmpjJi_YGVLCTYyP' # densenet201 model
 
 model_file_name = 'modelInception'
@@ -48,8 +51,6 @@ async def setup_device():
     if torch.cuda.is_available():
         # load model on gpu and set it on test mode
         model = torch.load(model_path)
-        print(model)
-
         model.eval()
         model.cuda(device)
     else:
@@ -86,9 +87,11 @@ def index(request):
 
 @app.route('/analyze', methods=['POST'])
 async def analyze(request):
-    data = await request.form()
-    data = await (data['file'].read())
-    root = json.load(data)
+    print('oli')
+    data = await request.files('file')
+    data.save(os.path.join('app/', 'inputjson.xml'))
+    #data = await (data['file'].read())
+    #root = json.load(data)
     itemUrl = root['imageUrl']
 
     data_dir = download_images(itemUrl)
