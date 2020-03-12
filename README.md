@@ -1,5 +1,4 @@
-# reto-deep-learning
-BREIN reto postulación
+
 
 ## Installation and local usage
 
